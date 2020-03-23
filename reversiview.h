@@ -1,17 +1,14 @@
 #pragma once
 
+#include "case.h"
+
 #include <QFrame>
 
 class ReversiView : public QFrame
 {
-    enum class State { User, Bot, Empty};
-
     Q_OBJECT
 public:
     explicit ReversiView(QWidget *parent = nullptr);
-
-    void paintEvent (QPaintEvent *event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
 
     void resetTiles();
     void setStartCenter();
@@ -22,9 +19,11 @@ public:
 signals:
 
 private:
-    State** _tiles;
+    Tile*** _tiles;
 
     const int _numberOfColumns = 8;
     const int _numberOfRows = 8;
+
+    void setupUi();
 };
 

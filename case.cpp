@@ -2,30 +2,44 @@
 
 #include <QPainter>
 
-Case::Case(QWidget *parent, State s) : QWidget(parent), _state(s)
+Tile::Tile(QWidget *parent, TileState s) : QWidget(parent), _state(s)
 {
-
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
-void Case::paintEvent(QPaintEvent *event)
+QSize Tile::sizeHint() const
 {
+    return QSize(30, 30);
+}
+
+QSize Tile::minimumSizeHint() const
+{
+    return QSize(15, 15);
+}
+
+void Tile::paintEvent(QPaintEvent *event)
+{
+    constexpr int margin = 4;
+
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
 
     switch (_state) {
-    case State::User:
-        painter.setBrush(Qt::NoBrush);
-        painter.setPen(Qt::blue);
+    case TileState::Empty:
+        painter.setBrush(Qt::transparent);
+        painter.setPen(Qt::DashLine);
         break;
-    case State::Bot:
-        painter.setBrush(Qt::NoBrush);
-        painter.setPen(Qt::blue);
-
+    case TileState::Bot:
+        painter.setBrush(Qt::darkGray);
+        painter.setPen(Qt::NoPen);
         break;
-    case State::Empty:
-        break;
-    case State::Invalid:
+    case TileState::User:
+        painter.setBrush(Qt::darkBlue);
+        painter.setPen(Qt::NoPen);
         break;
     default:
-        break;
+        qWarning("Invalid State");
     }
+    painter.drawEllipse(margin, margin, width() - 2 * margin, height() - 2 * margin);
 }
+

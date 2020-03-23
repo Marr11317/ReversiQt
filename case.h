@@ -2,19 +2,28 @@
 
 #include <QWidget>
 
-class Case : public QWidget
+enum class TileState { User, Bot, Empty};
+
+class Tile : public QWidget
 {
-    enum class State { User, Bot, Empty, Invalid};
+
     Q_OBJECT
 public:
-    explicit Case(QWidget *parent = nullptr, State s = State::Empty);
+    explicit Tile(QWidget *parent = nullptr, TileState s = TileState::Empty);
+
+    virtual QSize sizeHint() const override;
+    virtual QSize minimumSizeHint() const;
+
 
     void paintEvent (QPaintEvent *event) override;
+
+    TileState state() const { return _state; }
+    void setState(const TileState &state) { _state = state; }
 
 signals:
 
 private:
-    State _state = State::Invalid;
+    TileState _state = TileState::Empty;
 
 };
 
