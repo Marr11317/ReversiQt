@@ -2,6 +2,7 @@
 
 #include "reversiview.h"
 
+#include <QLabel>
 #include <QMainWindow>
 #include <QPushButton>
 
@@ -14,8 +15,14 @@ public:
     ~Reversi();
 
 private:
-    ReversiView* _reversi;
-    QPushButton* _restart;
+    ReversiView* _reversi; // The view
+    QPushButton* _restart; // The restart button
+    Tile* _turn;           // Shows who's turn it is
+
+    QLabel* _botCount;
+    QLabel* _userCount;
 
     void setupUi();
+
+    void updateTurn();
 };

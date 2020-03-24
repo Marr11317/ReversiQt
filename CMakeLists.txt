@@ -26,7 +26,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
 
-set(TS_FILES QtReversi_fr_CA.ts)
+set(TS_FILES
+    QtReversi_en_CA.ts
+    QtReversi_fr_CA.ts
+    )
 
 set(FILES
     main.cpp
@@ -34,6 +37,7 @@ set(FILES
     reversi.cpp reversi.h
     reversiview.cpp reversiview.h
     case.cpp case.h
+    playertile.cpp playertile.h
     )
 if(ANDROID)
   add_library(QtReversi SHARED
