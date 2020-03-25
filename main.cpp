@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
                     "color: white;"
                     "}"
                     "ReversiView {"
-                    "background-color: rgb(251, 255, 206);"
+                    "background-image: url(:/images/images/woodbackground.png);"
                     "}");
     Reversi w;
     w.show();

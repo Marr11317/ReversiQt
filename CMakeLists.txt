@@ -39,16 +39,23 @@ set(FILES
     case.cpp case.h
     playertile.cpp playertile.h
     )
+
+set(RESOURCES
+    resources.qrc
+    )
+
 if(ANDROID)
-  add_library(QtReversi SHARED
-    ${FILES}
-    ${TS_FILES}
-  )
+    add_library(QtReversi SHARED
+        ${RESOURCES}
+        ${FILES}
+        ${TS_FILES}
+        )
 else()
-  add_executable(QtReversi
-    ${FILES}
-    ${TS_FILES}
-  )
+    add_executable(QtReversi
+        ${RESOURCES}
+        ${FILES}
+        ${TS_FILES}
+        )
 endif()
 
 target_link_libraries(QtReversi PRIVATE Qt5::Widgets)

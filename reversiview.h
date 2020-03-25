@@ -8,7 +8,6 @@ class ReversiView : public QFrame
 {
     Q_OBJECT
 
-    enum class Turn { Bot, User };
     enum class Direction {
         Up,
         Down,
@@ -20,51 +19,62 @@ class ReversiView : public QFrame
         DownLeft
     };
 
+    Q_PROPERTY(bool end READ end WRITE setEnd NOTIFY endChanged)
+
 public:
     explicit ReversiView(QWidget *parent = nullptr);
 
     void restart();
     void userPlay(Tile *tile);
+    bool play(Tile* tile);
 
-    Turn turn() const { return _turn; }
-    void setTurn(const Turn &turn) { _turn = turn; }
-    void nextTurn() { setTurn((turn() == Turn::Bot) ? Turn::User : Turn::Bot); emit turnChanged(turn()); }
-
-    const TileState tileStateForTurn() const { return (turn() == Turn::Bot) ? TileState::Bot : TileState::User; }
+    TileState turn() const { return _turn; }
+    void setTurn(const TileState &turn) { _turn = turn; }
+    void nextTurn() { setTurn((turn() == TileState::Bot) ? TileState::User : TileState::Bot); emit turnChanged(turn()); }
 
     int numberOfColumns() const;
     int numberOfRows() const;
 
+    Tile *botCalculateBestOption() const;
+
     Tile ***tiles() const;
     void setTiles(Tile ***tiles);
 
-    QColor emptyColorForTurn (Turn t);
+    QColor emptyColorForTurn (TileState t);
     QColor emptyColorForTurn () { return emptyColorForTurn(turn()); }
 
     QPair<int, int> countBotAndUser();
 
     void setEmptyColor(QColor);
 
+    bool end() const { return m_end; }
+
+public slots:
+    void setEnd(bool end) { m_end = end; emit endChanged(m_end); }
+
 signals:
-    void turnChanged(Turn);
+    void turnChanged(TileState);
+    void endChanged(bool end);
 
 private:
-    // variables
+    /// variables
     Tile*** _tiles;
 
-    Turn _turn = Turn::User;
+    TileState _turn = TileState::User;
 
     const int _numberOfColumns = 8;
     const int _numberOfRows = 8;
 
-    // functions
+    bool m_end = false;
+
+    /// functions
     void setupUi();
 
     void resetTiles();
     void setStartCenter();
     void restartTiles();
 
-    QVector<Tile*> getReturnedTilesForMove(Tile* tile) const;
+    QVector<Tile*> getReturnedTilesForMove(Tile* tile, TileState player) const;
 
     Tile* adjacentTile(Tile *tile, Direction dir) const;
     bool occupiedAdjacentTile(Tile *tile, ReversiView::Direction dir) const;
@@ -72,7 +82,7 @@ private:
 
     const TileState enemyState(TileState state) const;
 
-    QPair<Tile*, int> optionTurningMost();
-    bool hasPossibleMove();
+    QPair<Tile*, int> optionTurningMost(TileState player) const;
+    bool hasPossibleMove(TileState player);
 
 };

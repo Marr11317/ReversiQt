@@ -8,13 +8,14 @@ enum class TileState { User, Bot, Empty};
 class Tile : public QAbstractButton
 {
     Q_OBJECT
+    Q_PROPERTY(QColor bestColor MEMBER _color READ color WRITE setColor NOTIFY colorChanged)
 
 public:
     explicit Tile(int xpos = -1, int ypos = -1, QWidget *parent = nullptr, TileState s = TileState::Empty);
 
 
     TileState tileState() const { return _tileState; }
-    void setTileState(const TileState &state) { _tileState = state; update(); }
+    void setTileState(const TileState &state);
 
     void setPlayerTileState(TileState s);
 
@@ -36,23 +37,33 @@ public:
     QColor emptyColor() const;
     void setEmptyColor(const QColor &emptyColor);
 
+    QColor color() const {  return _color; }
+    void setColor(QColor c);
+
+    QColor colorFromState(const TileState &state) const;
+    QColor colorFromCurrentState() const {return colorFromState(tileState()); }
+
 signals:
+    void colorChanged(QColor _color);
 
 private:
     int _xpos;
     int _ypos;
     TileState _tileState = TileState::Empty;
 
-    const QColor _botColor = QColor(Qt::green);
-    const QColor _userColor = QColor(Qt::blue);
+    const QColor _botColor;
+    const QColor _userColor;
     QColor _emptyColor;
 
+    QColor _color;
+
+
     const int _margin = 4;
+
 
 protected:
     virtual void paintEvent (QPaintEvent *) override;
     virtual QSize sizeHint() const override;
     virtual QSize minimumSizeHint() const override;
-//    virtual int heightForWidth(int w) { return w; }
 };
 

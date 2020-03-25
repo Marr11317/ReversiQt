@@ -2,17 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="QtReversi_fr_CA">
 <context>
-    <name>PlayerTile</name>
-    <message>
-        <source>The Enemy Bot</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Reversi</name>
     <message>
         <source>Reversi</source>

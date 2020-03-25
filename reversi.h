@@ -1,5 +1,6 @@
 #pragma once
 
+#include "playertile.h"
 #include "reversiview.h"
 
 #include <QLabel>
@@ -17,7 +18,7 @@ public:
 private:
     ReversiView* _reversi; // The view
     QPushButton* _restart; // The restart button
-    Tile* _turn;           // Shows who's turn it is
+    PlayerTile* _turn;           // Shows who's turn it is
 
     QLabel* _botCount;
     QLabel* _userCount;

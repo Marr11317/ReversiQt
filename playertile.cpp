@@ -1,25 +1,58 @@
 #include "playertile.h"
 
 #include <QPainter>
+#include <QtEvents>
 
 PlayerTile::PlayerTile()
-    : Tile()
+    : Tile(),
+      m_score(QPair<int, int> (2, 2)),
+      m_maxScore(64)
 {
 
 }
 
+void PlayerTile::setScore(QPair<int, int> score)
+{
+    m_score = score;
+    emit scoreChanged(m_score);
+    update();
+}
+
+qreal PlayerTile::scoreFraction() const
+{
+    qreal botScore = score().first;
+    qreal userScore = score().second;
+    return botScore / (botScore + userScore);
+}
+
 void PlayerTile::paintEvent(QPaintEvent *event)
 {
-    Tile::paintEvent(event);
-
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    QColor col;
-    painter.setPen(col.darker());
-    QString text = tileState() == TileState::Bot ? tr("The Enemy Bot") : tr("You");
-    painter.drawText(QRect(margin(), margin(), width() - 2 * margin(), height() - 2 * margin()),
-                     text,
-                     Qt::AlignVCenter | Qt::AlignHCenter);
+
+    QLinearGradient grad(QPointF(width() / 2, 0.0), QPointF(width() / 2, height()));
+    //    grad.setSpread(QGradient::PadSpread); // default
+    qreal botPlace = qreal(score().first) / maxScore();
+    qreal userPlace = 1.0 - qreal(score().second) / maxScore();
+    grad.setColorAt(0, botColor());
+    grad.setColorAt(1.0, userColor());
+    if (totalScore() == maxScore()) {
+        static constexpr qreal margin = 0.02;
+        const qreal center = (botPlace + userPlace) / 2;
+        grad.setColorAt(center, Qt::black);
+        grad.setColorAt(center + margin, userColor());
+        grad.setColorAt(center - margin, botColor());
+    }
+    else {
+        grad.setColorAt(botPlace, Qt::black);
+        grad.setColorAt(userPlace, Qt::black);
+        grad.setColorAt((botPlace + userPlace) / 2, Qt::white); // middle white
+    }
+    painter.setBrush(QBrush(grad));
+    painter.drawEllipse(margin(), margin(), width() - 2 * margin(), height() - 2 * margin());
+
+    event->accept();
+
 }
 
 QSize PlayerTile::sizeHint() const

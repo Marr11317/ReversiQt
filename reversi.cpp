@@ -34,6 +34,7 @@ void Reversi::setupUi()
     _restart->setText(tr("Restart"));
 //    _restart->setEnabled(false);
     connect(_restart, &QPushButton::clicked, _reversi, &ReversiView::restart);
+    connect(_restart, &QPushButton::clicked, _reversi, [=](){ updateTurn(); });
     grid->addWidget(_restart, 3, 3);
 
     _userCount = new QLabel(QString::number(0));
@@ -52,6 +53,7 @@ void Reversi::setupUi()
 
     grid->setRowStretch(1, 1);
     _turn = new PlayerTile();
+    _turn->setMaxScore(_reversi->numberOfColumns() * _reversi->numberOfRows());
     updateTurn();
     grid->addWidget(_turn, 1, 3);
 
@@ -66,6 +68,6 @@ void Reversi::updateTurn()
     _botCount->setText(QString::number(countPair.first));
     _userCount->setText(QString::number(countPair.second));
 
-    _turn->setTileState(_reversi->tileStateForTurn());
+    _turn->setScore(countPair);
     _reversi->setEmptyColor(_reversi->emptyColorForTurn());
 }

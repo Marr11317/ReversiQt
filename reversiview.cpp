@@ -35,44 +35,66 @@ void ReversiView::restartTiles()
 
 void ReversiView::restart()
 {
-    QMessageBox::StandardButton n = QMessageBox::warning(this, tr("Restart?"), tr("The game will restart. This cannot be undone. \nProceed?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    QMessageBox::StandardButton n = QMessageBox::Yes;
+    if (!end())
+         n = QMessageBox::warning(this, tr("Restart?"), tr("The game will restart. This cannot be undone. \nProceed?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
     if (n == QMessageBox::Yes) {
         restartTiles();
+        setEnd(false);
         update();
     }
 }
 
 void ReversiView::userPlay(Tile* tile)
 {
-    if (tile->tileState() == TileState::Empty) {
-        QVector<Tile*> returned = getReturnedTilesForMove(tile);
-        if (returned.isEmpty()) {
-            QMessageBox::information(this, tr("Invalid move"), tr("This move is invalid because it doesn't turn any tile."), QMessageBox::Ok, QMessageBox::Ok);
-            return;
-        }
-        for (Tile* t : returned) {
-            t->exchange();
-        }
-        switch (turn()) {
-        case Turn::User:
-            tile->setTileState(TileState::User);
-            break;
-        case Turn::Bot:
-            tile->setTileState(TileState::Bot);
-            break;
-        }
-        nextTurn();
-    }
+    if (!play(tile))
+        return;
 
-    if (!hasPossibleMove()) {
-        setEmptyColor(Qt::transparent);
+    if (!hasPossibleMove(turn())) {
+        if (!hasPossibleMove(enemyState(turn()))) {
+            setEnd(true);
+            setEmptyColor(Qt::transparent);
 
-        QString s;
-        if (true)
+            QString s;
+            if (true)
                 s= tr("Haha! I beat you again! You mere human...");
-        QMessageBox::information(this, tr("The End"), s, QMessageBox::Ok, QMessageBox::Ok);
+            QMessageBox::information(this, tr("The End"), s, QMessageBox::Ok, QMessageBox::Ok);
+        }
+        else {
+            nextTurn();
+        }
     }
+    else {
+        if (turn() == TileState::Bot)
+            userPlay(botCalculateBestOption());
+    }
+}
+
+bool ReversiView::play(Tile *tile)
+{
+    if (tile->tileState() != TileState::Empty)
+        return false;
+
+    QVector<Tile *> returned = getReturnedTilesForMove(tile, turn());
+    if (returned.isEmpty()) {
+        QMessageBox::information(this, tr("Invalid move"), tr("This move is invalid because it doesn't turn any tile."), QMessageBox::Ok, QMessageBox::Ok);
+        return false;
+    }
+
+    switch (turn()) {
+    case TileState::User:
+        tile->setTileState(TileState::User);
+        break;
+    case TileState::Bot:
+        tile->setTileState(TileState::Bot);
+        break;
+    }
+    for (Tile* t : returned) {
+        t->exchange();
+    }
+    nextTurn();
+    return true;
 }
 
 Tile ***ReversiView::tiles() const
@@ -85,9 +107,9 @@ void ReversiView::setTiles(Tile ***tiles)
     _tiles = tiles;
 }
 
-QColor ReversiView::emptyColorForTurn(ReversiView::Turn t)
+QColor ReversiView::emptyColorForTurn(TileState t)
 {
-    return t == Turn::Bot ? _tiles[0][0]->botColor() : _tiles[0][0]->userColor();
+    return t == TileState::Bot ? _tiles[0][0]->botColor() : _tiles[0][0]->userColor();
 }
 
 QPair<int, int> ReversiView::countBotAndUser()
@@ -132,6 +154,21 @@ int ReversiView::numberOfRows() const
     return _numberOfRows;
 }
 
+Tile *ReversiView::botCalculateBestOption() const
+{
+    // place in corner if possible
+    if (getReturnedTilesForMove(tiles()[0][0], turn()).count())
+        return tiles()[0][0];
+    if (getReturnedTilesForMove(tiles()[numberOfColumns() - 1][0], turn()).count())
+        return tiles()[numberOfColumns() - 1][0];
+    if (getReturnedTilesForMove(tiles()[0][numberOfRows() - 1], turn()).count())
+        return tiles()[0][numberOfRows() - 1];
+    if (getReturnedTilesForMove(tiles()[numberOfColumns() - 1][numberOfRows() - 1], turn()).count())
+        return tiles()[numberOfColumns() - 1][numberOfRows() - 1];
+
+    return optionTurningMost(turn()).first;
+}
+
 void ReversiView::setupUi()
 {
     QGridLayout* grid = new QGridLayout;
@@ -145,21 +182,20 @@ void ReversiView::setupUi()
     setLayout(grid);
 }
 
-QVector<Tile *> ReversiView::getReturnedTilesForMove(Tile* tile) const
+QVector<Tile *> ReversiView::getReturnedTilesForMove(Tile* tile, TileState player) const
 {
     if (tile->tileState() != TileState::Empty)
         return QVector<Tile *>(); // you cannot do this move.
     QVector<Tile *> result;
-    TileState t = tileStateForTurn();
-    result.append(emprisonsInDir(tile, t, Direction::Up));
-    result.append(emprisonsInDir(tile, t, Direction::Down));
-    result.append(emprisonsInDir(tile, t, Direction::Right));
-    result.append(emprisonsInDir(tile, t, Direction::Left));
+    result.append(emprisonsInDir(tile, player, Direction::Up));
+    result.append(emprisonsInDir(tile, player, Direction::Down));
+    result.append(emprisonsInDir(tile, player, Direction::Right));
+    result.append(emprisonsInDir(tile, player, Direction::Left));
 
-    result.append(emprisonsInDir(tile, t, Direction::UpRight));
-    result.append(emprisonsInDir(tile, t, Direction::UpLeft));
-    result.append(emprisonsInDir(tile, t, Direction::DownRight));
-    result.append(emprisonsInDir(tile, t, Direction::DownLeft));
+    result.append(emprisonsInDir(tile, player, Direction::UpRight));
+    result.append(emprisonsInDir(tile, player, Direction::UpLeft));
+    result.append(emprisonsInDir(tile, player, Direction::DownRight));
+    result.append(emprisonsInDir(tile, player, Direction::DownLeft));
     return result;
 }
 
@@ -200,7 +236,7 @@ Tile *ReversiView::adjacentTile(Tile* tile, ReversiView::Direction dir) const
             return nullptr;
         return _tiles[tile->xpos() + 1][tile->ypos() - 1];
     default:
-        Q_ASSERT(false);
+        Q_UNREACHABLE(); // in other cases, we should not get here
         return nullptr;
     }
 }
@@ -223,13 +259,13 @@ const TileState ReversiView::enemyState(TileState state) const
     return state == TileState::User ? TileState::Bot : TileState::User;
 }
 
-QPair<Tile *, int> ReversiView::optionTurningMost()
+QPair<Tile *, int> ReversiView::optionTurningMost(TileState player) const
 {
     int count = 0;
     Tile* tile = nullptr;
     for (int i = 0; i < numberOfColumns(); ++i) {
         for (int j = 0; j < numberOfRows(); ++j) {
-            int c = getReturnedTilesForMove(tiles()[i][j]).count();
+            int c = getReturnedTilesForMove(tiles()[i][j], player).count();
             if (c > count) {
                 tile = tiles()[i][j];
                 count = c;
@@ -239,11 +275,11 @@ QPair<Tile *, int> ReversiView::optionTurningMost()
     return QPair<Tile* , int> (tile, count);
 }
 
-bool ReversiView::hasPossibleMove()
+bool ReversiView::hasPossibleMove(TileState player)
 {
     for (int i = 0; i < numberOfColumns(); ++i) {
         for (int j = 0; j < numberOfRows(); ++j) {
-            if (getReturnedTilesForMove(tiles()[i][j]).count())
+            if (getReturnedTilesForMove(tiles()[i][j], player).count())
                 return true;
         }
     }
@@ -264,14 +300,13 @@ ReversiView::ReversiView(QWidget *parent) : QFrame(parent)
         for (int j = 0; j < _numberOfColumns; ++j) {
             // Do not set the parent, as it is added automatically with the grid layout
             _tiles[i][j] = new Tile (i, j);
-            _tiles[i][j]->setXpos(i);
-            _tiles[i][j]->setYpos(j);
+            _tiles[i][j]->setPos(QPoint(i, j));
             connect(_tiles[i][j], &QAbstractButton::clicked, [=]() { userPlay(_tiles[i][j]); });
-            _tiles[i][j]->setTileState(qrand() % 2 ? TileState::Bot : TileState::User);
+//            _tiles[i][j]->setTileState(qrand() % 2 ? TileState::Bot : TileState::User);
         }
     }
 
-//    restartTiles();
+    restartTiles();
 
     setFrameStyle(QFrame::Panel | QFrame::Raised);
     setLineWidth(2);
