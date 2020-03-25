@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QSound>
 #include <QtDebug>
 
 void ReversiView::resetTiles()
@@ -78,7 +79,7 @@ bool ReversiView::play(Tile *tile)
 
     QVector<Tile *> returned = getReturnedTilesForMove(tile, turn());
     if (returned.isEmpty()) {
-        QMessageBox::information(this, tr("Invalid move"), tr("This move is invalid because it doesn't turn any tile."), QMessageBox::Ok, QMessageBox::Ok);
+        QSound::play(":/images/audio/invalid.wav");
         return false;
     }
 

@@ -44,12 +44,12 @@ void Reversi::setupUi()
     f.setUnderline(true);
     _userCount->setFont(f);
     _userCount->setStyleSheet("color: white;");
-    grid->addWidget(_userCount, 0, 3, Qt::AlignCenter);
+    grid->addWidget(_userCount, 2, 3, Qt::AlignCenter);
 
     _botCount  = new QLabel(QString::number(0));
     _botCount->setStyleSheet("color: white;");
     _botCount->setFont(f);
-    grid->addWidget(_botCount, 2, 3, Qt::AlignCenter);
+    grid->addWidget(_botCount, 0, 3, Qt::AlignCenter);
 
     grid->setRowStretch(1, 1);
     _turn = new PlayerTile();

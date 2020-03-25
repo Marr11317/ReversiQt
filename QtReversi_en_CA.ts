@@ -18,33 +18,23 @@
 <context>
     <name>ReversiView</name>
     <message>
-        <location filename="reversiview.cpp" line="40"/>
+        <location filename="reversiview.cpp" line="41"/>
         <source>Restart?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="reversiview.cpp" line="40"/>
+        <location filename="reversiview.cpp" line="41"/>
         <source>The game will restart. This cannot be undone. 
 Proceed?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="reversiview.cpp" line="81"/>
-        <source>Invalid move</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="reversiview.cpp" line="81"/>
-        <source>This move is invalid because it doesn&apos;t turn any tile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="reversiview.cpp" line="61"/>
+        <location filename="reversiview.cpp" line="62"/>
         <source>Haha! I beat you again! You mere human...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="reversiview.cpp" line="62"/>
+        <location filename="reversiview.cpp" line="63"/>
         <source>The End</source>
         <translation type="unfinished"></translation>
     </message>

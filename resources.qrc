@@ -2,5 +2,6 @@
     <qresource prefix="/images">
         <file>images/woodbackground.png</file>
         <file>images/woodbutton.png</file>
+        <file>audio/invalid.wav</file>
     </qresource>
 </RCC>

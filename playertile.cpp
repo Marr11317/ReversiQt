@@ -37,17 +37,17 @@ void PlayerTile::paintEvent(QPaintEvent *event)
     grad.setColorAt(0, botColor());
     grad.setColorAt(1.0, userColor());
     if (totalScore() == maxScore()) {
-        static constexpr qreal margin = 0.02;
-        const qreal center = (botPlace + userPlace) / 2;
-        grad.setColorAt(center, Qt::black);
-        grad.setColorAt(center + margin, userColor());
-        grad.setColorAt(center - margin, botColor());
+//        static constexpr qreal margin = 0.02;
+//        const qreal center = (botPlace + userPlace) / 2;
+//        grad.setColorAt(center, Qt::black);
+//        grad.setColorAt(center + margin, userColor());
+//        grad.setColorAt(center - margin, botColor());
     }
     else {
         grad.setColorAt(botPlace, Qt::black);
-        grad.setColorAt(userPlace, Qt::black);
         grad.setColorAt((botPlace + userPlace) / 2, Qt::white); // middle white
     }
+    grad.setColorAt(userPlace, Qt::black);
     painter.setBrush(QBrush(grad));
     painter.drawEllipse(margin(), margin(), width() - 2 * margin(), height() - 2 * margin());
 
