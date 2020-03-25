@@ -43,6 +43,8 @@ public:
     QColor colorFromState(const TileState &state) const;
     QColor colorFromCurrentState() const {return colorFromState(tileState()); }
 
+    bool empty() const { return tileState() == TileState::Empty; }
+
 signals:
     void colorChanged(QColor _color);
 

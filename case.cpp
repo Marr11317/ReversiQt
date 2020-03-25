@@ -15,8 +15,8 @@ Tile::Tile(int xpos, int ypos, QWidget *parent, TileState s) :
     _xpos(xpos),
     _ypos(ypos),
     _emptyColor(Qt::darkGray),
-    _botColor(Qt::green),
-    _userColor(Qt::blue),
+    _botColor(QColor::fromRgb(255, 187, 0)),
+    _userColor(QColor::fromRgb(255, 0, 47)),
     _color(colorFromState(s))
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -119,38 +119,25 @@ void Tile::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
+    if (tileState() == TileState::Empty && !underMouse()) {
+//        QGradientStops stops;
 
-    switch (_tileState) {
-    case TileState::Empty:
-        painter.setPen(Qt::DashLine);
-        if (underMouse()) { // hovered
-            painter.setBrush(emptyColor());
-        }
-        else
-            painter.setBrush(Qt::transparent);
-        break;
-    case TileState::Bot:
-    case TileState::User:
-    {
+//        stops << QGradientStop(0.00, Qt::black);
+//        stops << QGradientStop(1.00, Qt::transparent);
+//        QRadialGradient grad(QPointF(0, 0), height() / 2 - margin(), QPointF(width() / 2, height() / 2));
+//        grad.setStops(stops);
+        painter.setBrush(QBrush(QColor::fromRgbF(0, 0, 0, 0.2)));
+    }
+    else {
         painter.setPen(Qt::NoPen);
         QGradientStops stops;
 
         stops << QGradientStop(0.00, QColor::fromRgba(0xffffffff));
-        stops << QGradientStop(0.11, color());
-//        stops << QGradientStop(0.13, QColor::fromRgba(0xfff9ff99));
-//        stops << QGradientStop(0.14, QColor::fromRgba(0xfff3ff86));
-//        stops << QGradientStop(0.49, QColor::fromRgba(0xff93b353));
-//        stops << QGradientStop(0.87, QColor::fromRgba(0xff264619));
-//        stops << QGradientStop(0.96, QColor::fromRgba(0xff0c1306));
+        stops << QGradientStop(0.11, empty()? emptyColor() : color());
         stops << QGradientStop(1.00, Qt::black);
         QRadialGradient grad(QPointF(width() / 2, height() / 2), height() / 2 - margin(), QPointF(0, 0));
         grad.setStops(stops);
         painter.setBrush(QBrush(grad));
-        break;
-    }
-    default:
-        Q_UNREACHABLE();
-        return;
     }
     painter.drawEllipse(margin(), margin(), width() - 2 * margin(), height() - 2 * margin());
     event->accept();
