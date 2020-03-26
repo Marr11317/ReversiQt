@@ -29,12 +29,27 @@ Proceed?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="reversiview.cpp" line="62"/>
+        <location filename="reversiview.cpp" line="63"/>
         <source>Haha! I beat you again! You mere human...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="reversiview.cpp" line="63"/>
+        <location filename="reversiview.cpp" line="65"/>
+        <source>Wow! Look at how good I am!
+I wanted to tie the game, and it&apos;s exactly what happened!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="reversiview.cpp" line="68"/>
+        <source>Beeep -- Booop -- Buuup!
+... RECOVERING...
+...
+I crashed. That&apos;s why you won!!!
+Let&apos;s do a revenge.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="reversiview.cpp" line="73"/>
         <source>The End</source>
         <translation type="unfinished"></translation>
     </message>

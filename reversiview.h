@@ -85,4 +85,7 @@ private:
     QPair<Tile*, int> optionTurningMost(TileState player) const;
     bool hasPossibleMove(TileState player);
 
+    Tile ***getBoardAfterMove(Tile *move) const;
+    Tile ***getCopyBoard() const;
+    void AsciiPrintBoard(Tile ***board);
 };

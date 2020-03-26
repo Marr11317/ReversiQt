@@ -57,9 +57,19 @@ void ReversiView::userPlay(Tile* tile)
             setEnd(true);
             setEmptyColor(Qt::transparent);
 
+            QPair<int, int> score = countBotAndUser();
             QString s;
-            if (true)
+            if (score.first > score.second)
                 s= tr("Haha! I beat you again! You mere human...");
+            else if (score.first == score.second)
+                s= tr("Wow! Look at how good I am!\n"
+                      "I wanted to tie the game, and it's exactly what happened!");
+            else
+                s= tr("Beeep -- Booop -- Buuup!\n"
+                      "... RECOVERING...\n"
+                      "...\n"
+                      "I crashed. That's why you won!!!\n"
+                      "Let's do a revenge.");
             QMessageBox::information(this, tr("The End"), s, QMessageBox::Ok, QMessageBox::Ok);
         }
         else {
@@ -167,8 +177,55 @@ Tile *ReversiView::botCalculateBestOption() const
     if (getReturnedTilesForMove(tiles()[numberOfColumns() - 1][numberOfRows() - 1], turn()).count())
         return tiles()[numberOfColumns() - 1][numberOfRows() - 1];
 
+
+
     return optionTurningMost(turn()).first;
 }
+
+Tile ***ReversiView::getBoardAfterMove(Tile* move) const
+{
+    Tile ***board = getCopyBoard();
+    return board;
+
+}
+
+Tile ***ReversiView::getCopyBoard() const
+{
+    Tile *** result = new Tile**[_numberOfRows];
+    for(int i = 0; i < _numberOfRows; ++i) {
+        result[i] = new Tile*[_numberOfColumns];
+        for (int j = 0; j < _numberOfColumns; ++j) {
+            // Do not set the parent, as it is added automatically with the grid layout
+            result[i][j] = new Tile (i, j);
+            result[i][j]->setPos(QPoint(i, j));
+            result[i][j]->setTileState(_tiles[i][j]->tileState());
+        }
+    }
+    return result;
+}
+
+void ReversiView::AsciiPrintBoard(Tile *** board)
+{
+    for(int i = 0; i < _numberOfRows; ++i) {
+        for (int j = 0; j < _numberOfColumns; ++j) {
+            switch (board[i][j]->tileState()) {
+            case TileState::Empty:
+                printf("*");
+                break;
+            case TileState::User:
+                printf("X");
+                break;
+            case TileState::Bot:
+                printf("O");
+                break;
+            default:
+                Q_UNREACHABLE();
+                break;
+            }
+        }
+    }
+}
+
 
 void ReversiView::setupUi()
 {

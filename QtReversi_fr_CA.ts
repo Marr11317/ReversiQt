@@ -31,5 +31,18 @@ Proceed?</source>
         <source>The End</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Wow! Look at how good I am!
+I wanted to tie the game, and it&apos;s exactly what happened!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Beeep -- Booop -- Buuup!
+... RECOVERING...
+...
+I crashed. That&apos;s why you won!!!
+Let&apos;s do a revenge.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>
