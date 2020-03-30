@@ -67,4 +67,10 @@ set(CPACK_PACKAGE_VERSION_MAJOR "1")
 set(CPACK_PACKAGE_VERSION_MINOR "0")
 include(CPack)
 
+#CMAKE_POLICY(SET CMP0020 NEW)
+# remove console from release builds
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  set_property(TARGET QtReversi PROPERTY WIN32_EXECUTABLE true)
+endif()
+
 qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})

@@ -1,5 +1,6 @@
 #include "reversiview.h"
 
+#include <QDateTime>
 #include <QGridLayout>
 #include <QMessageBox>
 #include <QMouseEvent>
@@ -87,13 +88,14 @@ void ReversiView::userPlay(Tile* tile)
 
     if (!hasPossibleMove(turn())) { // if there is no place to place a tile, skip a turn;
         nextTurn();
+        setEmptyColor(emptyColorForTurn());
         if (!hasPossibleMove(turn())) { // if you still can't place a tile, then no one can, and it's the end of the game
             endGameTalk();
         }
     }
     else {
         if (turn() == TileState::Bot) {
-            QTimer::singleShot(750, [=]() { userPlay(botCalculateBestOption()); });
+            QTimer::singleShot(750, [=]() { userPlay(botCalculateBestOption()); setEmptyColor(emptyColorForTurn()); });
         }
     }
 }
@@ -159,14 +161,24 @@ QPair<int, int> ReversiView::countBotAndUser()
     return QPair<int, int> (botCount, userCount);
 }
 
-void ReversiView::setEmptyColor(QColor color)
+void ReversiView::setEmptyColor(QColor color, bool inValid) // inValid is wheter to care about if the tile is a valid move
 {
     int numCol = numberOfColumns();
     int numRows = numberOfRows();
     Tile *** tls = tiles();
     for (int i = 0; i < numCol; ++i) {
         for (int j = 0; j < numRows; ++j) {
-            tls[i][j]->setEmptyColor(color);
+            Tile* tile = tls[i][j];
+            if (inValid) { // wheter to care about if the tile is a valid move
+                bool valid = getReturnedTilesForMove(tile, turn()).count();
+                // reinitialise invalid tiles
+                tile->setPlayable(valid);
+                tile->setEmptyColor(valid ? color : Qt::transparent);
+            }
+            else {// set empty color anyway
+                tile->setPlayable(false);
+                tile->setEmptyColor(color);
+            }
         }
     }
 }
@@ -184,16 +196,17 @@ int ReversiView::numberOfRows() const
 Tile *ReversiView::botCalculateBestOption() const
 {
     // place in corner if possible
-    if (getReturnedTilesForMove(tiles()[0][0], turn()).count())
-        return tiles()[0][0];
+    QVector<Tile*> possibleMoves;
+    if (getReturnedTilesForMove(tiles()[0][0], turn()).count() && qrand())
+        possibleMoves.append(tiles()[0][0]);
     if (getReturnedTilesForMove(tiles()[numberOfColumns() - 1][0], turn()).count())
-        return tiles()[numberOfColumns() - 1][0];
+        possibleMoves.append(tiles()[numberOfColumns() - 1][0]);
     if (getReturnedTilesForMove(tiles()[0][numberOfRows() - 1], turn()).count())
-        return tiles()[0][numberOfRows() - 1];
+        possibleMoves.append(tiles()[0][numberOfRows() - 1]);
     if (getReturnedTilesForMove(tiles()[numberOfColumns() - 1][numberOfRows() - 1], turn()).count())
-        return tiles()[numberOfColumns() - 1][numberOfRows() - 1];
-
-
+        possibleMoves.append(tiles()[numberOfColumns() - 1][numberOfRows() - 1]);
+    if (possibleMoves.length())
+        return possibleMoves[qrand() % possibleMoves.length()];
 
     return optionTurningMost(turn()).first;
 }
@@ -344,6 +357,10 @@ QPair<Tile *, int> ReversiView::optionTurningMost(TileState player) const
                 tile = tiles()[i][j];
                 count = c;
             }
+            else if (c == count) {
+                if (qrand() % 2)
+                    tile = tiles()[i][j];
+            }
         }
     }
     return QPair<Tile* , int> (tile, count);
@@ -367,6 +384,8 @@ bool ReversiView::occupiedAdjacentTile(Tile* tile, ReversiView::Direction dir) c
 
 ReversiView::ReversiView(QWidget *parent) : QFrame(parent)
 {
+    // init the randomness
+    qsrand(QDateTime::currentMSecsSinceEpoch());
     // Init the tiles
     _tiles = new Tile**[_numberOfRows];
     for(int i = 0; i < _numberOfRows; ++i) {

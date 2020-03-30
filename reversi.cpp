@@ -53,6 +53,7 @@ void Reversi::setupUi()
     grid->setRowStretch(1, 1);
     _turn = new PlayerTile();
     _turn->setMaxScore(_reversi->numberOfColumns() * _reversi->numberOfRows());
+    _reversi->setEmptyColor(_reversi->emptyColorForTurn());
     updateTurn();
     grid->addWidget(_turn, 1, 3);
 
@@ -68,5 +69,4 @@ void Reversi::updateTurn()
     _userCount->setText(QString::number(countPair.second));
 
     _turn->setScore(countPair);
-    _reversi->setEmptyColor(_reversi->emptyColorForTurn());
 }

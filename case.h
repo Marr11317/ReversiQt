@@ -9,6 +9,7 @@ class Tile : public QAbstractButton
 {
     Q_OBJECT
     Q_PROPERTY(QColor bestColor MEMBER _color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(bool playable MEMBER _playable READ playable WRITE setPlayable NOTIFY playableChanged)
 
 public:
     explicit Tile(int xpos = -1, int ypos = -1, QWidget *parent = nullptr, TileState s = TileState::Empty);
@@ -45,8 +46,15 @@ public:
 
     bool empty() const { return tileState() == TileState::Empty; }
 
+    bool playable() const { return m_playable; }
+
+public slots:
+    void setPlayable(bool playable) { m_playable = playable; emit playableChanged(m_playable); update(); }
+
 signals:
     void colorChanged(QColor _color);
+
+    void playableChanged(bool playable);
 
 private:
     int _xpos;
@@ -58,10 +66,10 @@ private:
     QColor _emptyColor;
 
     QColor _color;
+    bool m_playable;
 
 
     const int _margin = 4;
-
 
 protected:
     virtual void paintEvent (QPaintEvent *) override;

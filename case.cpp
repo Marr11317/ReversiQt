@@ -119,7 +119,7 @@ void Tile::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    if (tileState() == TileState::Empty && !underMouse()) {
+    if (tileState() == TileState::Empty && !playable()) {
 //        QGradientStops stops;
 
 //        stops << QGradientStop(0.00, Qt::black);
@@ -127,6 +127,11 @@ void Tile::paintEvent(QPaintEvent *event)
 //        QRadialGradient grad(QPointF(0, 0), height() / 2 - margin(), QPointF(width() / 2, height() / 2));
 //        grad.setStops(stops);
         painter.setBrush(QBrush(QColor::fromRgbF(0, 0, 0, 0.2)));
+    }
+    else if (tileState() == TileState::Empty && !underMouse() && playable()) {
+        QPen pen = painter.pen();
+        pen.setWidthF(1.5);
+        painter.setPen(pen);
     }
     else {
         painter.setPen(Qt::NoPen);

@@ -45,7 +45,7 @@ public:
 
     QPair<int, int> countBotAndUser();
 
-    void setEmptyColor(QColor);
+    void setEmptyColor(QColor, bool inValid = true);
 
     bool end() const { return m_end; }
 
