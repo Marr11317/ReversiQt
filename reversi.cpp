@@ -34,7 +34,6 @@ void Reversi::setupUi()
     _restart->setText(tr("Restart"));
 //    _restart->setEnabled(false);
     connect(_restart, &QPushButton::clicked, _reversi, &ReversiView::restart);
-    connect(_restart, &QPushButton::clicked, _reversi, [=](){ updateTurn(); });
     grid->addWidget(_restart, 3, 3);
 
     _userCount = new QLabel(QString::number(0));

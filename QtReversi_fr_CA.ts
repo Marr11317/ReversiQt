@@ -24,24 +24,27 @@ Proceed?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Haha! I beat you again! You mere human...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The End</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Haha! I beat you again! You mere human...
+Because I am the greatest, I offer you a rematch.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Wow! Look at how good I am!
-I wanted to tie the game, and it&apos;s exactly what happened!</source>
+I wanted to tie the game, and it&apos;s exactly what happened!
+Ok. That&apos;s enough, next time I will be you fair and square.
+Let&apos;s play again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Beeep -- Booop -- Buuup!
 ... RECOVERING...
 ...
-I crashed. That&apos;s why you won!!!
-Let&apos;s do a revenge.</source>
+I crashed. And you cheated. That&apos;s why you won!!!
+I want a revenge.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

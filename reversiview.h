@@ -29,8 +29,8 @@ public:
     bool play(Tile* tile);
 
     TileState turn() const { return _turn; }
-    void setTurn(const TileState &turn) { _turn = turn; }
-    void nextTurn() { setTurn((turn() == TileState::Bot) ? TileState::User : TileState::Bot); emit turnChanged(turn()); }
+    void setTurn(const TileState &turn) { _turn = turn; emit turnChanged(turn);}
+    void nextTurn() { setTurn((turn() == TileState::Bot) ? TileState::User : TileState::Bot); }
 
     int numberOfColumns() const;
     int numberOfRows() const;
@@ -88,4 +88,5 @@ private:
     Tile ***getBoardAfterMove(Tile *move) const;
     Tile ***getCopyBoard() const;
     void AsciiPrintBoard(Tile ***board);
+    void endGameTalk();
 };

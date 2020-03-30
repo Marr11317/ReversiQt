@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QSound>
+#include <QTimer>
 #include <QtDebug>
 
 void ReversiView::resetTiles()
@@ -44,41 +45,56 @@ void ReversiView::restart()
         restartTiles();
         setEnd(false);
         update();
+        setTurn(TileState::User);
     }
+}
+
+void ReversiView::endGameTalk()
+{
+    setEnd(true);
+    setEmptyColor(Qt::transparent);
+
+    QPair<int, int> score = countBotAndUser();
+    QString s;
+    if (score.first > score.second)
+        s= tr("Haha! I beat you again! You mere human...\n"
+              "Because I am the greatest, I offer you a rematch.");
+    else if (score.first == score.second)
+        s= tr("Wow! Look at how good I am!\n"
+              "I wanted to tie the game, and it's exactly what happened!\n"
+              "Ok. That's enough, next time I will be you fair and square.\n"
+              "Let's play again.");
+    else
+        s= tr("Beeep -- Booop -- Buuup!\n"
+              "... RECOVERING...\n"
+              "...\n"
+              "I crashed. And you cheated. That's why you won!!!\n"
+              "I want a revenge.");
+    QMessageBox::StandardButton n = QMessageBox::information(this, tr("The End"), s, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+    if (n == QMessageBox::Yes)
+        restart();
+    // else if (n== QMessageBox::No) nothing to do.
+    // else Unreachable
 }
 
 void ReversiView::userPlay(Tile* tile)
 {
-    if (!play(tile))
+    if (end()) // Do nothing if game has ended
+        return;
+    if (!play(tile)) // do nothing if game is invalid
         return;
 
-    if (!hasPossibleMove(turn())) {
-        if (!hasPossibleMove(enemyState(turn()))) {
-            setEnd(true);
-            setEmptyColor(Qt::transparent);
-
-            QPair<int, int> score = countBotAndUser();
-            QString s;
-            if (score.first > score.second)
-                s= tr("Haha! I beat you again! You mere human...");
-            else if (score.first == score.second)
-                s= tr("Wow! Look at how good I am!\n"
-                      "I wanted to tie the game, and it's exactly what happened!");
-            else
-                s= tr("Beeep -- Booop -- Buuup!\n"
-                      "... RECOVERING...\n"
-                      "...\n"
-                      "I crashed. That's why you won!!!\n"
-                      "Let's do a revenge.");
-            QMessageBox::information(this, tr("The End"), s, QMessageBox::Ok, QMessageBox::Ok);
-        }
-        else {
-            nextTurn();
+    if (!hasPossibleMove(turn())) { // if there is no place to place a tile, skip a turn;
+        nextTurn();
+        if (!hasPossibleMove(turn())) { // if you still can't place a tile, then no one can, and it's the end of the game
+            endGameTalk();
         }
     }
     else {
-        if (turn() == TileState::Bot)
-            userPlay(botCalculateBestOption());
+        if (turn() == TileState::Bot) {
+            QTimer::singleShot(750, [=]() { userPlay(botCalculateBestOption()); });
+        }
     }
 }
 
