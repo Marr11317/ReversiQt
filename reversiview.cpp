@@ -70,7 +70,7 @@ void ReversiView::endGameTalk()
               "... RECOVERING...\n"
               "...\n"
               "I crashed. And you cheated. That's why you won!!!\n"
-              "I want a revenge.");
+              "I want revenge.");
     QMessageBox::StandardButton n = QMessageBox::information(this, tr("The End"), s, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
     if (n == QMessageBox::Yes)
